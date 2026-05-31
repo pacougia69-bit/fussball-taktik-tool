@@ -1,0 +1,24 @@
+# Logs und temporäre Dateien
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Editor-Dateien
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System-Dateien
+.directory
+desktop.ini
+
+# Backup-Dateien
+*.bak
+*.backup
+*~
+
+# Screenshots (falls vorhanden)
+screenshots/
+demo/
