@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Blomberger SV - Taktik Tool Pro V11 (Mobile Optimized)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
+  
+  body {
+    background: #090d16;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #f8fafc;
+    overflow: hidden;
+    height: 100vh;
+  }
+  
+  .app-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #0f172a;
+  }
+  
+  .app-header {
+    padding: 12px 20px;
+    background: linear-gradient(to bottom, #1e293b, #0f172a);
+    border-bottom: 2px solid #22c55e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 100;
+  }
+  
+  .app-header h1 {
+    font-size: 18px;
+    color: #22c55e;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .scene-counter {
+    font-size: 14px;
+    background: #1e293b;
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: #22c55e;
+    font-weight: 700;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+  
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    padding: 12px;
+    gap: 12px;
+    background: #090d16;
+    height: calc(100vh - 130px);
+    overflow: hidden;
+  }
+  
+  .field-area {
+    flex: 2.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+  }
+  
+  .field-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 900px;
+    max-height: 600px;
+    aspect-ratio: 3 / 2;
+    background: #14231c;
+    border: 3px solid #475569;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+  }
+
+  .pitch-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(90deg, #162e24, #162e24 10%, #1b382b 10%, #1b382b 20%);
+  }
+
+  .pitch-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255,255,255,0.4);
+    pointer-events: none;
+  }
+  
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  #arrowCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 12;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  #arrowCanvas.active-mode {
+    pointer-events: auto;
+  }
+  
+  .sidebar-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid #334155;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  
+  .sidebar-area h3 {
+    font-size: 14px;
+    color: #22c55e;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .notes-textarea {
+    width: 100%;
+    flex: 1;
+    background: #0f172a;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    color: #f8fafc;
+    padding: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: none;
+  }
+  
+  .notes-textarea:focus { outline: none; border-color: #22c55e; }
+  
+  .app-footer {
+    padding: 12px 20px;
+    background: #0f172a;
+    border-top: 1px solid #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+  }
+  
+  .footer-info {
+    font-size: 11px;
+    color: #64748b;
+    display: none; /* Auf kleinen Handys ausblenden für mehr Platz */
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  button {
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  button:hover { background: #334155; color: #fff; }
+
+  .btn-primary { background: #22c55e !important; color: #000 !important; border: none !important; }
+  .btn-primary:hover { background: #16a34a !important; }
+  
+  .btn-save { background: #0ea5e9 !important; color: #000 !important; border: none !important; }
+  .btn-duplicate { background: #8b5cf6 !important; color: #fff !important; border: none !important; }
+  .btn-arrow { background: #f97316 !important; color: #fff !important; border: none !important; }
+  .btn-arrow.active { background: #dc2626 !important; box-shadow: 0 0 12px rgba(220, 38, 38, 0.5); }
+  .btn-zone { background: #334155 !important; color: #f8fafc !important; border: 1px solid #475569 !important; }
+  .btn-zone.active { background: #22c55e !important; color: #000 !important; border: none !important; }
+  .btn-mode { background: #334155 !important; color: #fff !important; border: 1px solid #475569 !important; }
+  .btn-reset { background: #ef4444 !important; color: #fff !important; border: none !important; }
+
+  .player-node { transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: grab; }
+  .player-node.dragging { transition: none !important; }
+  .ball-circle { cursor: grab; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+  .ball-circle.dragging { transition: none !important; }
+  
+  /* Modal */
+  .modal-overlay {
+    display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); align-items: center; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box { background: #1e293b; border: 2px solid #22c55e; border-radius: 12px; padding: 24px; width: 90%; max-width: 360px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+  .modal-box h2 { color: #22c55e; margin-bottom: 16px; font-size: 18px; text-transform: uppercase; }
+  .input-group { margin-bottom: 12px; }
+  .input-group label { display: block; margin-bottom: 4px; color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+  .input-group input { width: 100%; padding: 10px 12px; border: 1px solid #475569; background: #0f172a; color: #fff; border-radius: 6px; font-size: 14px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .modal-actions button { flex: 1; }
+
+  .save-status {
+    position: fixed; bottom: 80px; right: 20px; background: #22c55e; color: #000; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 13px; z-index: 3000; animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .tool-info { position: absolute; bottom: 10px; left: 10px; background: rgba(14, 165, 233, 0.95); color: #000; padding: 8px 12px; border-radius: 6px; font-weight: 700; font-size: 11px; z-index: 1000; display: none; pointer-events: none; }
+  .tool-info.active { display: block; }
+
+  /* 📱 MOBILE RESPONSIVE RESPONSIVENESS (HOCHKANT-MODUS) */
+  @media (max-width: 768px) or (orientation: portrait) {
+    .main-content {
+      flex-direction: column;
+      height: calc(100vh - 160px);
+      overflow-y: auto;
+    }
+    .field-area {
+      flex: none;
+      width: 100%;
+    }
+    .sidebar-area {
+      flex: none;
+      width: 100%;
+      height: 180px;
+    }
+    .app-footer {
+      padding: 10px;
+    }
+    .footer-info { display: none; }
+  }
+  
+  @media (min-width: 1024px) {
+    .footer-info { display: block; }
+    .app-header h1 { font-size: 24px; }
+    button { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="app-header">
+    <h1 id="title">Szenario 1</h1>
+    <span class="scene-counter" id="counter">1/4</span>
+  </div>
+  
+  <div class="main-content">
+    <div class="field-area">
+      <div class="field-wrapper">
+        <div class="pitch-background"></div>
+        <svg id="zoneSvg" viewBox="0 0 100 66" style="z-index: 5; pointer-events: none;"></svg>
+        
+        <svg class="pitch-lines" viewBox="0 0 100 66">
+          <rect x="2" y="2" width="96" height="62" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+          <line x1="50" y1="2" x2="50" y2="64" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+          <circle cx="50" cy="33" r="9.15" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+          <circle cx="50" cy="33" r="0.5" fill="rgba(255,255,255,0.8)"/>
+          <rect x="2" y="13.85" width="16.5" height="38.3" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+          <rect x="2" y="23.0" width="5.5" height="20.0" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+          <rect x="81.5" y="13.85" width="16.5" height="38.3" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+          <rect x="92.5" y="23.0" width="5.5" height="20.0" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+        </svg>
+        
+        <svg id="gameFieldSvg" viewBox="0 0 100 66" preserveAspectRatio="none">
+          <defs>
+            <radialGradient id="ballShading" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="40%" stop-color="#e2e8f0"/>
+              <stop offset="85%" stop-color="#64748b"/>
+              <stop offset="100%" stop-color="#1e293b"/>
+            </radialGradient>
+            <radialGradient id="ballShadow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(0,0,0,0.6)"/>
+              <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+            </radialGradient>
+          </defs>
+        </svg>
+        <canvas id="arrowCanvas"></canvas>
+        <div class="tool-info" id="toolInfo">🎯 Ziehen = Pfeil | Rechtsklick / 2 Sek. gedrückt halten = Pfeil löschen</div>
+      </div>
+    </div>
+    
+    <div class="sidebar-area">
+      <h3>📋 Taktik-Anweisungen</h3>
+      <textarea class="notes-textarea" id="sceneNotes" placeholder="Schreibe hier die Taktik-Anweisungen für dieses Bild auf..."></textarea>
+    </div>
+  </div>
+  
+  <div class="app-footer">
+    <div class="button-group">
+      <button onclick="app.prevScene()">←</button>
+      <button class="btn-primary" onclick="app.nextScene()">→</button>
+      <button class="btn-duplicate" onclick="app.duplicateCurrentScene()">➕ Kopieren</button>
+      <button class="btn-save" onclick="app.saveScenario()">💾 Speichern</button>
+      <button class="btn-zone" id="zoneBtn" onclick="app.cycleZones()">🗺️ Zonen</button>
+      <button class="btn-arrow" id="arrowBtn" onclick="app.toggleArrowMode()">🎯 Pfeile</button>
+      <button class="btn-mode" id="lineModeBtn" onclick="app.toggleLineMode()" style="display:none;">Laufweg</button>
+      <button class="btn-reset" onclick="app.clearArrows()">✕ Pfeile</button>
+      <button style="background: #ef4444; color: white;" onclick="app.deleteCurrentScene()">🗑️ Löschen</button>
+      <button onclick="document.getElementById('importFile').click()">📤 Import</button>
+      <button onclick="app.exportData()">📥 Export</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importFile" style="display:none;" accept=".json">
+
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <h2>Spieler ändern</h2>
+    <div class="input-group">
+      <label>Name:</label>
+      <input type="text" id="playerName">
+    </div>
+    <div class="input-group">
+      <label>Nummer:</label>
+      <input type="text" id="playerNumber" maxlength="3">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="app.savePlayer()">✓ OK</button>
+      <button onclick="app.closeModal()">✕ Abbruch</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'blomberger_taktik_data';
+
+  const defaultPlayers = {
+    "Timo": { name: "Timo", number: "1" },
+    "Marlon": { name: "Marlon", number: "14" },
+    "Ben": { name: "Ben", number: "4" },
+    "Bo": { name: "Bo", number: "16" },
+    "Timur": { name: "Timur", number: "2" },
+    "Johannes": { name: "Johannes", number: "6" },
+    "Hassan": { name: "Hassan", number: "8" },
+    "Jasper": { name: "Jasper", number: "12" },
+    "Mo": { name: "Mo", number: "9" },
+    "Luci": { name: "Luci", number: "10" },
+    "Julian": { name: "Julian", number: "7" }
+  };
+
+  const defaultTexts = {
+    1: "Männer, das ist unsere Basis gegen den Ball (4-3-3).\n\nWir stehen eng und kompakt. Johannes und Hassan bleiben vor der Abwehr (Doppel-6) und machen die Mitte dicht. Mo, Luci und Julian laufen den Gegner vorne gemeinsam an. Jeder bleibt auf seiner Position!",
+    2: "Pressing-Phase (Übergang ins 2-4-4):\n\nWir gehen drauf! Wir jagen den Gegner hoch. Jasper sprintet sofort nach vorne neben Luci in den Sturm. Johannes, Hassan, Marlon und Timur rücken alle aggressiv nach. Wir machen die Räume eng und lassen dem Gegner keine Zeit!",
+    3: "Das ist unsere Grundordnung B (4-3-3).\n\nSpielaufbau (Eure Variante B: Zentrum fluten & Flügel überlaufen):\n\nAchtung, jetzt haben wir den Ball! Unsere drei Stürmer (Mo, Luci, Julian) ziehen alle zusammen nach INNEN in die Mitte.\n\nMarlon und Timur: Die Außenbahn ist komplett frei für euch! Ihr sprintet mit Tempo ganz weit nach AUßEN hoch! Hassan lässt sich fallen und holt den Ball ab. Johannes und Jasper laufen in die freien Räume. Option: Langer, diagonaler Ball zu Timur!",
+    4: "Der finale Pass (Tiefenlauf & Assist):\n\nBo hat den Ball und schaut hoch. Bo plays the ball (ORANGE Line) flach in den freien Raum zu Marlon.\n\nMarlon runs in full sprint (BLUE Line) zum Ball. Jasper sprintet sofort steil nach vorne. Mo, Luci und Julian laufen in den Strafraum. Wichtig: ALLE Spieler rücken mit nach vorne auf, auch Timur! Die Flanke kann auch lang auf den zweiten Pfosten fliegen!"
+  };
+
+  const initialPositions = {
+    1: { Timo: {x:6,y:33}, Marlon:{x:22,y:12}, Ben:{x:20,y:24}, Bo:{x:20,y:42}, Timur:{x:22,y:54}, Johannes:{x:38,y:22}, Hassan:{x:38,y:44}, Jasper:{x:50,y:33}, Mo:{x:68,y:12}, Luci:{x:72,y:33}, Julian:{x:68,y:54} },
+    2: { Timo:{x:12,y:33}, Ben:{x:26,y:24}, Bo:{x:26,y:42}, Marlon:{x:58,y:7}, Johannes:{x:62,y:29}, Hassan:{x:61,y:17}, Timur:{x:60,y:41}, Mo:{x:73,y:9}, Jasper:{x:73,y:21}, Luci:{x:73,y:33}, Julian:{x:73,y:46} },
+    3: { Timo:{x:17,y:33}, Ben:{x:32,y:44}, Bo:{x:29,y:18}, Johannes:{x:50,y:40}, Hassan:{x:38,y:30}, Timur:{x:54,y:58}, Marlon:{x:54,y:5}, Jasper:{x:50,y:20}, Mo:{x:67,y:20}, Luci:{x:67,y:30}, Julian:{x:67,y:40} },
+    4: { Timo:{x:17,y:33}, Ben:{x:32,y:44}, Bo:{x:29,y:18}, Johannes:{x:50,y:40}, Hassan:{x:38,y:30}, Timur:{x:54,y:58}, Marlon:{x:54,y:5}, Jasper:{x:61,y:16}, Mo:{x:67,y:20}, Luci:{x:67,y:30}, Julian:{x:67,y:40} }
+  };
+  
+  const app = {
+    scene: 1,
+    maxScenes: 4,
+    players: {},
+    savedData: {},
+    dragging: null,
+    draggingBall: false,
+    editing: null,
+    ball: { x: 50, y: 33 },
+    arrows: [],
+    drawingArrow: false,
+    arrowMode: false,
+    lineMode: 'Laufweg',
+    arrowStart: null,
+    zoneModes: ['none', 'halfr', 'box', 'thirds'],
+    zoneLabels: ['🗺️ Zonen: Aus', '🗺️ Halbräume', '🗺️ Strafraum', '🗺️ Drittel'],
+    activeZoneMode: 'none',
+    
+    init() {
+      this.loadSavedData();
+      this.loadScene(1);
+      window.addEventListener('resize', () => this.render());
+      document.getElementById('importFile').addEventListener('change', e => this.handleImport(e));
+      this.setupArrowCanvas();
+    },
+
+    setupArrowCanvas() {
+      const arrowCanvas = document.getElementById('arrowCanvas');
+      
+      const getCoords = e => {
+        const rect = arrowCanvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top
+        };
+      };
+
+      const startDraw = e => {
+        if (!this.arrowMode || (e.button && e.button === 2)) return;
+        if(e.touches && e.touches.length > 1) return;
+        
+        const coords = getCoords(e);
+        const wrapper = document.querySelector('.field-wrapper');
+        const scaleX = wrapper.offsetWidth / 100;
+        const scaleY = wrapper.offsetHeight / 66;
+        
+        this.drawingArrow = true;
+        this.arrowStart = {
+          x: coords.x / scaleX,
+          y: coords.y / scaleY,
+          px: coords.x,
+          py: coords.y
+        };
+        
+        if(e.touches) this.lastArrowEvent = { offsetX: coords.x, offsetY: coords.y };
+      };
+
+      const moveDraw = e => {
+        if (!this.drawingArrow) return;
+        if(e.cancelable) e.preventDefault(); // Verhindert Mobile-Scrolling beim Zeichnen
+        const coords = getCoords(e);
+        this.lastArrowEvent = { offsetX: coords.x, offsetY: coords.y };
+        this.drawArrows();
+      };
+
+      const endDraw = e => {
+        if (!this.drawingArrow || !this.arrowStart) return;
+        const wrapper = document.querySelector('.field-wrapper');
+        const scaleX = wrapper.offsetWidth / 100;
+        const scaleY = wrapper.offsetHeight / 66;
+        
+        const currentCoords = this.lastArrowEvent ? {x: this.lastArrowEvent.offsetX, y: this.lastArrowEvent.offsetY} : getCoords(e);
+        const endX = currentCoords.x / scaleX;
+        const endY = currentCoords.y / scaleY;
+        const dist = Math.sqrt(Math.pow(endX - this.arrowStart.x, 2) + Math.pow(endY - this.arrowStart.y, 2));
+        
+        if (dist > 2) {
+          const color = this.lineMode === 'Pass' ? '#f97316' : '#0ea5e9';
+          this.arrows.push({ x1: this.arrowStart.x, y1: this.arrowStart.y, x2: endX, y2: endY, color: color, type: this.lineMode });
+        }
+        
+        this.drawingArrow = false;
+        this.arrowStart = null;
+        this.drawArrows();
+      };
+
+      // Mouse Events
+      arrowCanvas.addEventListener('mousedown', startDraw);
+      arrowCanvas.addEventListener('mousemove', moveDraw);
+      window.addEventListener('mouseup', endDraw);
+      arrowCanvas.addEventListener('contextmenu', e => this.onArrowRightClick(e));
+      
+      // Touch Events (Mobile)
+      arrowCanvas.addEventListener('touchstart', startDraw, {passive: false});
+      arrowCanvas.addEventListener('touchmove', moveDraw, {passive: false});
+      arrowCanvas.addEventListener('touchend', endDraw);
+      
+      // Mobile Long-Press zum Löschen einzelner Pfeile
+      let touchTimer;
+      arrowCanvas.addEventListener('touchstart', e => {
+        if(!this.arrowMode || e.touches.length > 1) return;
+        const coords = getCoords(e);
+        touchTimer = setTimeout(() => { this.removeArrowAt(coords.x, coords.y); }, 700);
+      });
+      arrowCanvas.addEventListener('touchend', () => clearTimeout(touchTimer));
+      arrowCanvas.addEventListener('touchmove', () => clearTimeout(touchTimer));
+    },
+
+    cycleZones() {
+      let idx = this.zoneModes.indexOf(this.activeZoneMode);
+      idx = (idx + 1) % this.zoneModes.length;
+      this.activeZoneMode = this.zoneModes[idx];
+      
+      const btn = document.getElementById('zoneBtn');
+      btn.textContent = this.zoneLabels[idx];
+      if (this.activeZoneMode === 'none') { btn.classList.remove('active'); btn.textContent = "🗺️ Zonen"; }
+      else btn.classList.add('active');
+      
+      this.updateZoneOverlay(this.activeZoneMode);
+    },
+
+    updateZoneOverlay(mode) {
+      const zoneSvg = document.getElementById('zoneSvg');
+      zoneSvg.innerHTML = '';
+      if (mode === 'none') return;
+      
+      if (mode === 'halfr') {
+        const widths = [15, 15, 40, 15, 15];
+        const colors = ['rgba(239, 68, 68, 0.08)', 'rgba(14, 165, 233, 0.08)', 'rgba(241, 245, 249, 0.02)', 'rgba(14, 165, 233, 0.08)', 'rgba(239, 68, 68, 0.08)'];
+        let currentX = 2;
+        widths.forEach((w, i) => {
+          const widthPct = w * 0.96;
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('x', currentX); rect.setAttribute('y', '2'); rect.setAttribute('width', widthPct); rect.setAttribute('height', '62');
+          rect.setAttribute('fill', colors[i]); zoneSvg.appendChild(rect);
+          if (i < widths.length - 1) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', currentX + widthPct); line.setAttribute('y1', '2'); line.setAttribute('x2', currentX + widthPct); line.setAttribute('y2', '64');
+            line.setAttribute('stroke', 'rgba(255,255,255,0.25)'); line.setAttribute('stroke-dasharray', '1, 1'); line.setAttribute('stroke-width', '0.4');
+            zoneSvg.appendChild(line);
+          }
+          currentX += widthPct;
+        });
+      } else if (mode === 'box') {
+        const rect1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect1.setAttribute('x', '81.5'); rect1.setAttribute('y', '13.85'); rect1.setAttribute('width', '16.5'); rect1.setAttribute('height', '38.3');
+        rect1.setAttribute('fill', 'rgba(239, 68, 68, 0.12)'); rect1.setAttribute('stroke', 'rgba(239, 68, 68, 0.4)'); rect1.setAttribute('stroke-width', '0.4');
+        zoneSvg.appendChild(rect1);
+      } else if (mode === 'thirds') {
+        const w = 96 / 3;
+        for (let i = 0; i < 3; i++) {
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('x', 2 + i * w); rect.setAttribute('y', '2'); rect.setAttribute('width', w); rect.setAttribute('height', '62');
+          rect.setAttribute('fill', i === 2 ? 'rgba(34, 197, 94, 0.05)' : 'transparent');
+          rect.setAttribute('stroke', 'rgba(255,255,255,0.2)'); rect.setAttribute('stroke-dasharray', '2,2'); rect.setAttribute('stroke-width', '0.4');
+          zoneSvg.appendChild(rect);
+        }
+      }
+    },
+
+    drawArrows() {
+      const canvas = document.getElementById('arrowCanvas');
+      const wrapper = document.querySelector('.field-wrapper');
+      canvas.width = wrapper.offsetWidth; canvas.height = wrapper.offsetHeight;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const scaleX = wrapper.offsetWidth / 100; const scaleY = wrapper.offsetHeight / 66;
+      
+      this.arrows.forEach(arrow => { this.drawArrow(ctx, arrow.x1 * scaleX, arrow.y1 * scaleY, arrow.x2 * scaleX, arrow.y2 * scaleY, arrow.color, arrow.type); });
+      
+      if (this.drawingArrow && this.arrowStart) {
+        const event = this.lastArrowEvent;
+        if (event) {
+          const color = this.lineMode === 'Pass' ? '#f97316' : '#0ea5e9';
+          this.drawArrow(ctx, this.arrowStart.px, this.arrowStart.py, event.offsetX, event.offsetY, color, this.lineMode);
+        }
+      }
+    },
+
+    drawArrow(ctx, fromX, fromY, toX, toY, color, type) {
+      const headlen = 12; const angle = Math.atan2(toY - fromY, toX - fromX);
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 3;
+      ctx.beginPath();
+      if (type === 'Pass') ctx.setLineDash([5, 5]); else ctx.setLineDash([]);
+      ctx.moveTo(fromX, fromY); ctx.lineTo(toX, toY); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(toX, toY);
+      ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+      ctx.closePath(); ctx.fill();
+    },
+
+    toggleArrowMode() {
+      this.arrowMode = !this.arrowMode;
+      const btn = document.getElementById('arrowBtn');
+      const modeBtn = document.getElementById('lineModeBtn');
+      const info = document.getElementById('toolInfo');
+      const canvas = document.getElementById('arrowCanvas');
+      
+      if (this.arrowMode) {
+        btn.classList.add('active'); modeBtn.style.display = 'inline-block'; info.classList.add('active'); canvas.classList.add('active-mode');
+      } else {
+        btn.classList.remove('active'); modeBtn.style.display = 'none'; info.classList.remove('active'); canvas.classList.remove('active-mode');
+        this.drawingArrow = false;
+      }
+    },
+
+    toggleLineMode() {
+      this.lineMode = this.lineMode === 'Laufweg' ? 'Pass' : 'Laufweg';
+      const btn = document.getElementById('lineModeBtn');
+      btn.textContent = this.lineMode;
+      btn.style.background = this.lineMode === 'Pass' ? '#f97316' : '#334155';
+    },
+
+    onArrowRightClick(e) { if (!this.arrowMode) return; e.preventDefault(); this.removeArrowAt(e.offsetX, e.offsetY); },
+
+    removeArrowAt(canvasX, canvasY) {
+      const wrapper = document.querySelector('.field-wrapper');
+      const scaleX = wrapper.offsetWidth / 100; const scaleY = wrapper.offsetHeight / 66;
+      const clickX = canvasX / scaleX; const clickY = canvasY / scaleY;
+      const oldLength = this.arrows.length;
+      
+      this.arrows = this.arrows.filter(arrow => {
+        return this.pointToLineDistance(clickX, clickY, arrow.x1, arrow.y1, arrow.x2, arrow.y2) > 4;
+      });
+      if(this.arrows.length !== oldLength) { this.drawArrows(); this.showSaveStatus('Pfeil gelöscht! 🗑️'); }
+    },
+
+    pointToLineDistance(px, py, x1, y1, x2, y2) {
+      const A = px - x1; const B = py - y1; const C = x2 - x1; const D = y2 - y1;
+      const dot = A * C + B * D; const len_sq = C * C + D * D;
+      let param = -1; if (len_sq !== 0) param = dot / len_sq;
+      let xx, yy;
+      if (param < 0) { xx = x1; yy = y1; } else if (param > 1) { xx = x2; yy = y2; } else { xx = x1 + param * C; yy = y1 + param * D; }
+      return Math.sqrt(Math.pow(px - xx, 2) + Math.pow(py - yy, 2));
+    },
+
+    clearArrows() {
+      if(confirm('Möchtest du alle Pfeile in diesem Bild löschen?')) {
+        this.arrows = []; this.drawArrows(); this.showSaveStatus('Pfeile geleert!');
+      }
+    },
+    
+    loadSavedData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        this.savedData = JSON.parse(saved); this.maxScenes = Math.max(...Object.keys(this.savedData).map(Number), 4);
+      } else {
+        this.savedData = { 1: {}, 2: {}, 3: {}, 4: {} }; this.maxScenes = 4;
+      }
+    },
+    
+    saveScenario() {
+      const notes = document.getElementById('sceneNotes').value;
+      this.savedData[this.scene] = {
+        players: JSON.parse(JSON.stringify(this.players)), ball: JSON.parse(JSON.stringify(this.ball)), arrows: JSON.parse(JSON.stringify(this.arrows)), notes: notes, zoneMode: this.activeZoneMode
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.savedData));
+      this.showSaveStatus(`Szenario ${this.scene} gespeichert! ⚽`);
+    },
+
+    duplicateCurrentScene() {
+      this.saveScenario(); this.maxScenes++; const newSceneIndex = this.scene + 1;
+      for (let i = this.maxScenes; i > newSceneIndex; i--) { this.savedData[i] = this.savedData[i - 1]; }
+      this.savedData[newSceneIndex] = JSON.parse(JSON.stringify(this.savedData[this.scene]));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.savedData));
+      this.showSaveStatus(`Kopiert in Szenario ${newSceneIndex}!`);
+      this.loadScene(newSceneIndex);
+    },
+
+    deleteCurrentScene() {
+      if (this.maxScenes <= 1) { alert("Das letzte Bild kann nicht gelöscht werden!"); return; }
+      if (!confirm(`Szenario ${this.scene} wirklich löschen?`)) return;
+      for (let i = this.scene; i < this.maxScenes; i++) { this.savedData[i] = this.savedData[i + 1]; }
+      delete this.savedData[this.maxScenes]; this.maxScenes--;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.savedData));
+      this.showSaveStatus(`Szenario gelöscht!`);
+      this.loadScene(this.scene > this.maxScenes ? this.maxScenes : this.scene);
+    },
+    
+    loadScene(n) {
+      document.getElementById('sceneNotes').value = ""; this.scene = n;
+      let positions = (this.savedData[n] && this.savedData[n].players && Object.keys(this.savedData[n].players).length > 0) ? this.savedData[n].players : initialPositions[n] || initialPositions[1];
+      
+      this.players = {};
+      for (const key in defaultPlayers) {
+        const pos = positions[key] || { x: 50, y: 33 };
+        this.players[key] = { name: positions[key]?.name || defaultPlayers[key].name, number: positions[key]?.number || defaultPlayers[key].number, x: pos.x, y: pos.y };
+      }
+      this.ball = (this.savedData[n] && this.savedData[n].ball) ? JSON.parse(JSON.stringify(this.savedData[n].ball)) : { x: 50, y: 33 };
+      this.arrows = (this.savedData[n] && this.savedData[n].arrows) ? JSON.parse(JSON.stringify(this.savedData[n].arrows)) : [];
+      
+      if (this.savedData[n] && this.savedData[n].notes) document.getElementById('sceneNotes').value = this.savedData[n].notes;
+      else if (defaultTexts[n]) document.getElementById('sceneNotes').value = defaultTexts[n];
+      
+      this.activeZoneMode = (this.savedData[n] && this.savedData[n].zoneMode) ? this.savedData[n].zoneMode : 'none';
+      const idx = this.zoneModes.indexOf(this.activeZoneMode);
+      const btn = document.getElementById('zoneBtn');
+      if(btn) {
+        btn.textContent = this.activeZoneMode === 'none' ? "🗺️ Zonen" : this.zoneLabels[idx];
+        if (this.activeZoneMode === 'none') btn.classList.remove('active'); else btn.classList.add('active');
+      }
+      this.updateZoneOverlay(this.activeZoneMode);
+      
+      document.getElementById('title').textContent = `Szenario ${n}`;
+      document.getElementById('counter').textContent = `${n}/${this.maxScenes}`;
+      this.render();
+    },
+    
+    render() {
+      const svg = document.getElementById('gameFieldSvg');
+      const nodesToRemove = svg.querySelectorAll('.player-node, .ball-circle, .ball-shadow-circle');
+      nodesToRemove.forEach(node => node.remove());
+      
+      for (const key in this.players) {
+        const p = this.players[key]; const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('data-player', key); g.setAttribute('class', 'player-node'); g.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        
+        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        poly.setAttribute('points', this.getHexPoints(0, 0, 2.4)); poly.setAttribute('fill', '#16a34a'); poly.setAttribute('stroke', '#ffffff'); poly.setAttribute('stroke-width', '0.3');
+        poly.setAttribute('style', 'filter: drop-shadow(0px 0px 4px rgba(34,197,94,0.6));'); g.appendChild(poly);
+        
+        const num = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        num.setAttribute('text-anchor', 'middle'); num.setAttribute('dominant-baseline', 'central'); num.setAttribute('fill', '#000000'); num.setAttribute('font-size', '1.6'); num.setAttribute('font-weight', '900');
+        num.textContent = p.number; g.appendChild(num);
+        
+        const nameBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        nameBg.setAttribute('fill', 'rgba(15, 23, 42, 0.85)'); nameBg.setAttribute('rx', '0.6');
+        const textWidth = p.name.length * 0.7 + 1.2;
+        nameBg.setAttribute('x', -textWidth / 2); nameBg.setAttribute('y', 2.7); nameBg.setAttribute('width', textWidth); nameBg.setAttribute('height', 1.5); g.appendChild(nameBg);
+        
+        const name = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        name.setAttribute('text-anchor', 'middle'); name.setAttribute('fill', '#f8fafc'); name.setAttribute('font-size', '1.1'); name.setAttribute('font-weight', '700');
+        name.setAttribute('y', '3.8'); name.textContent = p.name; g.appendChild(name); svg.appendChild(g);
+      }
+      
+      const bShadow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      bShadow.setAttribute('class', 'ball-shadow-circle'); bShadow.setAttribute('cx', this.ball.x + 0.4); bShadow.setAttribute('cy', this.ball.y + 0.4); bShadow.setAttribute('r', '1.3'); bShadow.setAttribute('fill', 'url(#ballShadow)'); svg.appendChild(bShadow);
+
+      const ballG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      ballG.setAttribute('data-ball', 'true'); ballG.setAttribute('class', 'ball-circle'); ballG.style.transform = `translate(${this.ball.x}px, ${this.ball.y}px)`;
+      
+      const base = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      base.setAttribute('cx', '0'); base.setAttribute('cy', '0'); base.setAttribute('r', '1.2'); base.setAttribute('fill', '#ffffff'); ballG.appendChild(base);
+
+      const paths = [
+        "M -0.3,-0.3 L 0,-0.6 L 0.3,-0.3 L 0.2,0.1 L -0.2,0.1 Z", "M 0,-0.6 L -0.4,-0.9 L -0.8,-0.7 L -0.7,-0.3 L -0.3,-0.3",
+        "M 0.3,-0.3 L 0.7,-0.3 L 0.8,-0.7 L 0.4,-0.9 L 0,-0.6", "M 0.2,0.1 L 0.5,0.4 L 0.3,0.8 L -0.1,0.7 L -0.2,0.1", "M -0.2,0.1 L -0.5,0.4 L -0.8,0.2 L -0.7,-0.3"
+      ];
+      paths.forEach(d => {
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', d); p.setAttribute('fill', '#1e293b'); p.setAttribute('stroke', '#cbd5e1'); p.setAttribute('stroke-width', '0.08'); ballG.appendChild(p);
+      });
+
+      const shading = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      shading.setAttribute('cx', '0'); shading.setAttribute('cy', '0'); shading.setAttribute('r', '1.2'); shading.setAttribute('fill', 'url(#ballShading)'); shading.setAttribute('opacity', '0.65'); ballG.appendChild(shading);
+      svg.appendChild(ballG);
+      
+      this.attachHandlers(); this.drawArrows();
+    },
+    
+    getHexPoints(x, y, r) {
+      let points = []; for (let i = 0; i < 6; i++) { let angle = (i * 60) * Math.PI / 180; points.push(`${x + r * Math.cos(angle)},${y + r * Math.sin(angle)}`); } return points.join(' ');
+    },
+    
+    attachHandlers() {
+      const svg = document.getElementById('gameFieldSvg');
+      const newSvg = svg.cloneNode(true);
+      svg.parentNode.replaceChild(newSvg, svg);
+      
+      const handleStart = e => {
+        if (this.arrowMode) return; // Pfeile zeichnen blockiert Spielerziehen
+        const target = e.target.closest('[data-player]') || e.target.closest('[data-ball]');
+        if (!target) return;
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        
+        if (e.detail === 2 || (e.touches && this.touchTime && Date.now() - this.touchTime < 300)) {
+          const playerG = e.target.closest('[data-player]');
+          if (playerG) { this.openModal(playerG.getAttribute('data-player')); return; }
+        }
+        if(e.touches) this.touchTime = Date.now();
+
+        if (target.hasAttribute('data-player')) {
+          this.dragging = target.getAttribute('data-player'); target.classList.add('dragging');
+        } else if (target.hasAttribute('data-ball')) {
+          this.draggingBall = true; target.classList.add('dragging');
+        }
+      };
+      
+      const handleMove = e => {
+        if (!this.dragging && !this.draggingBall) return;
+        if(e.cancelable) e.preventDefault(); // Verhindert Mobile-Spielfeld-Wackeln beim Ziehen
+
+        const rect = newSvg.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        const x = ((clientX - rect.left) / rect.width) * 100;
+        const y = ((clientY - rect.top) / rect.height) * 66;
+        
+        if (this.dragging) {
+          const p = this.players[this.dragging]; p.x = Math.max(3, Math.min(97, x)); p.y = Math.max(3, Math.min(63, y));
+          const g = newSvg.querySelector(`[data-player="${this.dragging}"]`); if (g) g.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        }
+        if (this.draggingBall) {
+          this.ball.x = Math.max(2, Math.min(98, x)); this.ball.y = Math.max(2, Math.min(64, y));
+          const ballG = newSvg.querySelector('[data-ball]'); if (ballG) ballG.style.transform = `translate(${this.ball.x}px, ${this.ball.y}px)`;
+          const shadowG = newSvg.querySelector('.ball-shadow-circle'); if (shadowG) { shadowG.setAttribute('cx', this.ball.x + 0.4); shadowG.setAttribute('cy', this.ball.y + 0.4); }
+        }
+      };
+
+      const handleEnd = () => {
+        if (this.dragging) { const g = newSvg.querySelector(`[data-player="${this.dragging}"]`); if (g) g.classList.remove('dragging'); this.dragging = null; }
+        if (this.draggingBall) { const ballG = newSvg.querySelector('[data-ball]'); if (ballG) ballG.classList.remove('dragging'); this.draggingBall = false; }
+      };
+
+      // Mouse Listeners
+      newSvg.addEventListener('mousedown', handleStart);
+      newSvg.addEventListener('mousemove', handleMove);
+      window.addEventListener('mouseup', handleEnd);
+      
+      // Touch Listeners (Mobile)
+      newSvg.addEventListener('touchstart', handleStart, {passive: false});
+      newSvg.addEventListener('touchmove', handleMove, {passive: false});
+      window.addEventListener('touchend', handleEnd);
+    },
+    
+    openModal(key) {
+      this.editing = key; document.getElementById('playerName').value = this.players[key].name; document.getElementById('playerNumber').value = this.players[key].number; document.getElementById('editModal').classList.add('active');
+    },
+    closeModal() { document.getElementById('editModal').classList.remove('active'); this.editing = null; },
+    savePlayer() {
+      if (this.editing) {
+        const n = document.getElementById('playerName').value; const nr = document.getElementById('playerNumber').value;
+        if (n) { this.players[this.editing].name = n; this.players[this.editing].number = nr; this.render(); }
+      }
+      this.closeModal();
+    },
+    nextScene() { if (this.scene < this.maxScenes) this.loadScene(this.scene + 1); },
+    prevScene() { if (this.scene > 1) this.loadScene(this.scene - 1); },
+    resetScene() { this.loadScene(this.scene); },
+    exportData() {
+      this.saveScenario();
+      const blob = new Blob([JSON.stringify({ timestamp: new Date().toISOString(), scenarios: this.savedData }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `blomberger-taktik-${Date.now()}.json`; a.click();
+      this.showSaveStatus('Daten exportiert! 📥');
+    },
+    handleImport(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = event => {
+        try {
+          const data = JSON.parse(event.target.result); this.savedData = data.scenarios || {}; this.maxScenes = Math.max(...Object.keys(this.savedData).map(Number), 4);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(this.savedData)); this.loadScene(1); this.showSaveStatus('Daten importiert! 📤');
+        } catch (err) { alert('Fehler beim Importieren!'); }
+      };
+      reader.readAsText(file); document.getElementById('importFile').value = '';
+    },
+    showSaveStatus(msg) {
+      const status = document.createElement('div'); status.className = 'save-status'; status.textContent = msg; document.body.appendChild(status);
+      setTimeout(() => { status.style.animation = 'slideIn 0.3s ease reverse'; setTimeout(() => status.remove(), 300); }, 2000);
+    }
+  };
+  
+  app.init();
+</script>
+</body>
+</html>

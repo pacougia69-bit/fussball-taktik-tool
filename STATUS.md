@@ -1,11 +1,12 @@
 # Fußball-Taktik-Tool — STATUS
-*Letzte Aktualisierung: 31.05.2026*
+*Letzte Aktualisierung: 31.05.2026 — V11 Mobile Update*
 
 ## 📊 Aktueller Stand
 ✅ **Funktional** — Tool ist vollständig einsatzbereit
 
 ### Vorhandene Dateien
-- **`A-Jgd-Blomberger-taktik-profi_10.html`** — Hauptanwendung (Taktik Tool Pro V10)
+- **`A-Jgd-Blomberger-taktik-profi_11.html`** — Hauptanwendung (Taktik Tool Pro V11 + Mobile)
+- `A-Jgd-Blomberger-taktik-profi_10.html` — Vorherige Version (Backup)
 - `blomberger-taktik-1780241668050.json` — Gespeicherte Taktik-Szenarien mit Spielerpositionen
 - `blomberger_taktik_leitfaden.pdf` — Ausführlicher Leitfaden
 - `taktikboard_kurzanleitung.pdf` — PDF-Kurzanleitung
@@ -24,6 +25,7 @@
 - **Export/Import JSON** — Datenaustausch & Backup
 - **localStorage** — Automatische lokale Speicherung
 - **Touch-Support** — Tablet-optimiert
+- **Mobile-optimiert** — Responsive Design für Smartphones (V11)
 - **Rechtsklick-Features** — Pfeile einzeln löschen
 
 ## 📝 Nächste Schritte / TODOs
@@ -31,7 +33,7 @@
 ### 🚀 **Erweiterte Features (Roadmap)**
 - [ ] **Voice-Over / KI-Stimme** — Taktik-Ansagen automatisch generieren
 - [ ] **Video-Export** — Animierte Taktik-Videos erstellen
-- [ ] **Mobile-Ansicht** — Optimierung für Smartphone-Nutzung
+- [x] ~~**Mobile-Ansicht** — Optimierung für Smartphone-Nutzung~~ ✅ **Erledigt V11**
 
 ### 🔧 **Projekt-Organisation**
 - [ ] **Git-Repository einrichten** (optional)
