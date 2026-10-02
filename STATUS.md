@@ -7,7 +7,7 @@
 der A-Jugend-Spieler durch Platzhalter "Spieler 1"–"Spieler 11" ersetzt, da minderjährig;
 Taktik-Beispieltexte generisch umformuliert). Diese lokale Version hier (mit echten Namen)
 bleibt unverändert die private Arbeitskopie — die Web-Version ist eine separate, bereinigte
-Kopie unter `C:\Users\rafae\Desktop\Projekte\Homepage\public\tools\taktik-tool.html`.
+Kopie unter `C:\Users\rafae\Claude.Dateien\PROJEKTE\Homepage-rmaassen\quellcode\public\tools\taktik-tool.html`.
 ✅ **16.07.2026 (später am Tag): PIN-Schutz + Hilfe-Modal ergänzt.** Live-Zugriff jetzt
 PIN-geschützt (Rafael-Entscheidung: Karte bleibt öffentlich sichtbar/erklärt, aber nur er
 selbst nutzt das Tool live — bei Interesse melden sich Leute bei ihm). Platzhalter-Namen
