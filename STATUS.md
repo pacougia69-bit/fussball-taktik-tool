@@ -7,7 +7,7 @@
 der A-Jugend-Spieler durch Platzhalter "Spieler 1"–"Spieler 11" ersetzt, da minderjährig;
 Taktik-Beispieltexte generisch umformuliert). Diese lokale Version hier (mit echten Namen)
 bleibt unverändert die private Arbeitskopie — die Web-Version ist eine separate, bereinigte
-Kopie unter `C:\Users\rafae\Claude.Dateien\PROJEKTE\Homepage-rmaassen\quellcode\public\tools\taktik-tool.html`.
+Kopie unter `C:\Users\rafae\Claude.Dateien\PROJEKTE\1_Muss-laufen\Homepage-rmaassen\quellcode\public\tools\taktik-tool.html`.
 ✅ **16.07.2026 (später am Tag): PIN-Schutz + Hilfe-Modal ergänzt.** Live-Zugriff jetzt
 PIN-geschützt (Rafael-Entscheidung: Karte bleibt öffentlich sichtbar/erklärt, aber nur er
 selbst nutzt das Tool live — bei Interesse melden sich Leute bei ihm). Platzhalter-Namen
@@ -17,7 +17,7 @@ landen nur im eigenen Browser-localStorage. Die separate `taktikboard_kurzanleit
 ❓-Hilfe-Modal direkt in der Web-Version eingebaut (4 Abschnitte: Spieler/Ball, Laufwege/
 Pässe, Zonen, Szenarien verwalten) — guter Kandidat, dieselbe Anleitung auch hier in die
 lokale Version mit den echten Namen zu übernehmen, falls gewünscht (noch nicht gemacht).
-Details zur Einbindung: `PROJEKTE/Homepage-rmaassen/STATUS.md`.
+Details zur Einbindung: `PROJEKTE/1_Muss-laufen/Homepage-rmaassen/STATUS.md`.
 
 ### Vorhandene Dateien
 - **`A-Jgd-Blomberger-taktik-profi_11.html`** — Hauptanwendung (Taktik Tool Pro V11 + Mobile)

@@ -68,7 +68,7 @@ Digitales Taktik-Board für den **Blomberger SV A-Jugend** Team. Ermöglicht int
 
 ## 🚀 Deployment & Usage
 - **Hosting:** Lokal (Datei im Browser öffnen)
-- **URL:** `file:///C:/Users/rafae/Claude.Dateien/PROJEKTE/Fussball-Taktik-Tool/A-Jgd-Blomberger-taktik-profi_10.html`
+- **URL:** `file:///C:/Users/rafae/Claude.Dateien/PROJEKTE/1_Muss-laufen/Fussball-Taktik-Tool/A-Jgd-Blomberger-taktik-profi_10.html`
 - **Backup:** JSON-Dateien regelmäßig sichern
 - **Sharing:** HTML-Datei auf USB-Stick oder per E-Mail
 
